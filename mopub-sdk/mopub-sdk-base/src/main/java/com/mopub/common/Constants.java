@@ -17,6 +17,9 @@ public class Constants {
 
     public static final int TEN_SECONDS_MILLIS = 10 * 1000;
     public static final int THIRTY_SECONDS_MILLIS = 30 * 1000;
+    public static final int FOUR_HOURS_MILLIS = 4 * 60 * 60 * 1000;
+
+    public static final int AD_EXPIRATION_DELAY = FOUR_HOURS_MILLIS;
 
     public static final int TEN_MB = 10 * 1024 * 1024;
 
@@ -24,4 +27,9 @@ public class Constants {
 
     public static final String NATIVE_VIDEO_ID = "native_video_id";
     public static final String NATIVE_VAST_VIDEO_CONFIG = "native_vast_video_config";
+
+    // Internal Video Tracking nouns, defined in ad server
+    public static final String VIDEO_TRACKING_EVENTS_KEY = "events";
+    public static final String VIDEO_TRACKING_URLS_KEY = "urls";
+    public static final String VIDEO_TRACKING_URL_MACRO = "%%VIDEO_EVENT%%";
 }

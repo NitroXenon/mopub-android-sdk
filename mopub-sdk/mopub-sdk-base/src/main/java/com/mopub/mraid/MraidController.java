@@ -794,7 +794,7 @@ public class MraidController {
     }
 
     @VisibleForTesting
-    void handleClose() {
+    protected void handleClose() {
         if (mMraidWebView == null) {
             // Doesn't throw an exception because the ad has been destroyed
             return;
@@ -954,7 +954,7 @@ public class MraidController {
     }
 
     @VisibleForTesting
-    void handleCustomClose(boolean useCustomClose) {
+    protected void handleCustomClose(boolean useCustomClose) {
         boolean wasUsingCustomClose = !mCloseableAdContainer.isCloseVisible();
         if (useCustomClose == wasUsingCustomClose) {
             return;

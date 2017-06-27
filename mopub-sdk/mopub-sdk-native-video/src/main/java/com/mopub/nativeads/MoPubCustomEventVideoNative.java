@@ -30,6 +30,7 @@ import com.mopub.nativeads.NativeVideoController.NativeVideoProgressRunnable;
 import com.mopub.network.TrackingRequest;
 
 import org.json.JSONArray;
+import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.lang.ref.WeakReference;
@@ -48,6 +49,7 @@ import static com.mopub.common.DataKeys.JSON_BODY_KEY;
 import static com.mopub.common.DataKeys.MAX_BUFFER_MS;
 import static com.mopub.common.DataKeys.PAUSE_VISIBLE_PERCENT;
 import static com.mopub.common.DataKeys.PLAY_VISIBLE_PERCENT;
+import static com.mopub.common.DataKeys.VIDEO_TRACKERS_KEY;
 import static com.mopub.nativeads.NativeImageHelper.preCacheImages;
 import static com.mopub.nativeads.NativeVideoController.VisibilityTrackingEvent;
 
@@ -308,6 +310,19 @@ public class MoPubCustomEventVideoNative extends CustomEventNative {
                     mVideoResponseHeaders.getImpressionVisibleMs();
             visibilityTrackingEvents.add(visibilityTrackingEvent);
 
+            // VAST impression trackers
+            for (final VastTracker vastTracker : vastVideoConfig.getImpressionTrackers()) {
+                final VisibilityTrackingEvent vastImpressionTrackingEvent =
+                        new VisibilityTrackingEvent();
+                vastImpressionTrackingEvent.strategy = new PayloadVisibilityStrategy(mContext,
+                        vastTracker.getTrackingUrl());
+                vastImpressionTrackingEvent.minimumPercentageVisible =
+                        mVideoResponseHeaders.getImpressionMinVisiblePercent();
+                vastImpressionTrackingEvent.totalRequiredPlayTimeMs =
+                        mVideoResponseHeaders.getImpressionVisibleMs();
+                visibilityTrackingEvents.add(vastImpressionTrackingEvent);
+            }
+
             // Visibility tracking event from http response Vast payload
             mVastVideoConfig = vastVideoConfig;
             final VideoViewabilityTracker vastVideoViewabilityTracker =
@@ -342,6 +357,12 @@ public class MoPubCustomEventVideoNative extends CustomEventNative {
                     mId, mContext, visibilityTrackingEvents, mVastVideoConfig, mEventDetails);
 
             mCustomEventNativeListener.onNativeAdLoaded(this);
+
+            // Internal Video Trackers
+            final JSONObject videoTrackers = mVideoResponseHeaders.getVideoTrackers();
+            if (videoTrackers != null) {
+                mVastVideoConfig.addVideoTrackers(videoTrackers);
+            }
         }
 
         private boolean containsRequiredKeys(@NonNull final JSONObject jsonObject) {
@@ -893,6 +914,7 @@ public class MoPubCustomEventVideoNative extends CustomEventNative {
         private int mImpressionMinVisiblePercent;
         private int mImpressionVisibleMs;
         private int mMaxBufferMs;
+        private JSONObject mVideoTrackers;
 
         VideoResponseHeaders(@NonNull final Map<String, String> serverExtras) {
             try {
@@ -905,6 +927,18 @@ public class MoPubCustomEventVideoNative extends CustomEventNative {
                 mHeadersAreValid = true;
             } catch (NumberFormatException e) {
                 mHeadersAreValid = false;
+            }
+
+            final String videoTrackers = serverExtras.get(VIDEO_TRACKERS_KEY);
+            if (TextUtils.isEmpty(videoTrackers)) {
+                return;
+            }
+
+            try {
+                mVideoTrackers = new JSONObject(videoTrackers);
+            } catch (JSONException e) {
+                MoPubLog.d("Failed to parse video trackers to JSON: " + videoTrackers, e);
+                mVideoTrackers = null;
             }
         }
 
@@ -930,6 +964,10 @@ public class MoPubCustomEventVideoNative extends CustomEventNative {
 
         int getMaxBufferMs() {
             return mMaxBufferMs;
+        }
+
+        JSONObject getVideoTrackers() {
+            return mVideoTrackers;
         }
     }
 }

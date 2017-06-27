@@ -14,11 +14,11 @@ import static org.fest.assertions.api.Assertions.assertThat;
 @Config(constants = BuildConfig.class)
 public class RewardedVideoDataTest {
 
-    private RewardedVideoData subject;
+    private RewardedAdData subject;
 
     @Before
     public void setup() {
-        subject = new RewardedVideoData();
+        subject = new RewardedAdData();
     }
 
     @Test

@@ -18,6 +18,7 @@ import java.util.List;
 
 import static com.mopub.common.Constants.HTTP;
 import static com.mopub.common.Constants.HTTPS;
+import static com.mopub.common.MoPub.getBrowserAgent;
 import static com.mopub.network.TrackingRequest.makeTrackingHttpRequest;
 
 /**
@@ -102,7 +103,13 @@ public enum UrlAction {
     /* 3 */ OPEN_NATIVE_BROWSER(true) {
         @Override
         public boolean shouldTryHandlingUrl(@NonNull final Uri uri) {
-            return "mopubnativebrowser".equalsIgnoreCase(uri.getScheme());
+            final String scheme = uri.getScheme();
+
+            if (HTTP.equalsIgnoreCase(scheme) || HTTPS.equalsIgnoreCase(scheme)) {
+                return getBrowserAgent() == MoPub.BrowserAgent.NATIVE;
+            }
+
+            return "mopubnativebrowser".equalsIgnoreCase(scheme);
         }
 
         @Override

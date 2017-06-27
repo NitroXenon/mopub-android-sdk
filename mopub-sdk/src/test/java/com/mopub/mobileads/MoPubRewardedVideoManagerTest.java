@@ -462,7 +462,7 @@ public class
     @Test
     public void onRewardedVideoCompleted_withEmptyServerCompletionUrl_withCurrentlyShowingAdUnitId_shouldNotifyRewardedVideoCompletedForOneAdUnitId() {
         MoPubReward moPubReward = MoPubReward.success(MOPUB_REWARD, 123);
-        RewardedVideoData rewardedVideoData = MoPubRewardedVideoManager.getRewardedVideoData();
+        RewardedAdData rewardedVideoData = MoPubRewardedVideoManager.getRewardedVideoData();
         rewardedVideoData.setCurrentlyShowingAdUnitId("testAdUnit1");
         rewardedVideoData.updateAdUnitCustomEventMapping("testAdUnit1", new TestCustomEvent(), null,
                 TestCustomEvent.AD_NETWORK_ID);
@@ -486,7 +486,7 @@ public class
     @Test
     public void onRewardedVideoCompleted_withEmptyServerCompletionUrl_withNoCurrentlyShowingAdUnitId_shouldNotifyRewardedVideoCompletedForAllAdUnitIds() {
         MoPubReward moPubReward = MoPubReward.success(MOPUB_REWARD, 123);
-        RewardedVideoData rewardedVideoData = MoPubRewardedVideoManager.getRewardedVideoData();
+        RewardedAdData rewardedVideoData = MoPubRewardedVideoManager.getRewardedVideoData();
         rewardedVideoData.setCurrentlyShowingAdUnitId(null);
         rewardedVideoData.updateAdUnitCustomEventMapping("testAdUnit1", new TestCustomEvent(), null,
                 TestCustomEvent.AD_NETWORK_ID);

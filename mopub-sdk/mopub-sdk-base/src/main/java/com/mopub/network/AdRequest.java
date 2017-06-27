@@ -199,6 +199,12 @@ public class AdRequest extends Request<AdResponse> {
                 fullAdTypeString, headers);
         builder.setCustomEventClassName(customEventClassName);
 
+        // Default browser agent from X-Browser-Agent header
+        MoPub.BrowserAgent browserAgent = MoPub.BrowserAgent.fromHeader(
+                extractIntegerHeader(headers, ResponseHeader.BROWSER_AGENT));
+        MoPub.setBrowserAgentFromAdServer(browserAgent);
+        builder.setBrowserAgent(browserAgent);
+
         // Process server extras if they are present:
         String customEventData = extractHeader(headers, ResponseHeader.CUSTOM_EVENT_DATA);
 
@@ -266,18 +272,35 @@ public class AdRequest extends Request<AdResponse> {
                             .build()
             );
         }
+
+        // Extract internal video trackers, if available
+        final String videoTrackers = extractHeader(headers, ResponseHeader.VIDEO_TRACKERS);
+        if (videoTrackers != null) {
+            serverExtras.put(DataKeys.VIDEO_TRACKERS_KEY, videoTrackers);
+        }
+
         builder.setServerExtras(serverExtras);
 
-        if (AdType.REWARDED_VIDEO.equals(adTypeString) || AdType.CUSTOM.equals(adTypeString)) {
+        if (AdType.REWARDED_VIDEO.equals(adTypeString) || AdType.CUSTOM.equals(adTypeString) ||
+                AdType.REWARDED_PLAYABLE.equals(adTypeString)) {
             final String rewardedVideoCurrencyName = extractHeader(headers,
                     ResponseHeader.REWARDED_VIDEO_CURRENCY_NAME);
             final String rewardedVideoCurrencyAmount = extractHeader(headers,
                     ResponseHeader.REWARDED_VIDEO_CURRENCY_AMOUNT);
+            final String rewardedCurrencies = extractHeader(headers,
+                    ResponseHeader.REWARDED_CURRENCIES);
             final String rewardedVideoCompletionUrl = extractHeader(headers,
                     ResponseHeader.REWARDED_VIDEO_COMPLETION_URL);
+            final Integer rewardedDuration = extractIntegerHeader(headers,
+                    ResponseHeader.REWARDED_DURATION);
+            final boolean shouldRewardOnClick = extractBooleanHeader(headers,
+                    ResponseHeader.SHOULD_REWARD_ON_CLICK, false);
             builder.setRewardedVideoCurrencyName(rewardedVideoCurrencyName);
             builder.setRewardedVideoCurrencyAmount(rewardedVideoCurrencyAmount);
+            builder.setRewardedCurrencies(rewardedCurrencies);
             builder.setRewardedVideoCompletionUrl(rewardedVideoCompletionUrl);
+            builder.setRewardedDuration(rewardedDuration);
+            builder.setShouldRewardOnClick(shouldRewardOnClick);
         }
 
         AdResponse adResponse = builder.build();
@@ -291,7 +314,8 @@ public class AdRequest extends Request<AdResponse> {
             @Nullable String fullAdType) {
         return AdType.MRAID.equals(adType) || AdType.HTML.equals(adType) ||
                 (AdType.INTERSTITIAL.equals(adType) && FullAdType.VAST.equals(fullAdType)) ||
-                (AdType.REWARDED_VIDEO.equals(adType) && FullAdType.VAST.equals(fullAdType));
+                (AdType.REWARDED_VIDEO.equals(adType) && FullAdType.VAST.equals(fullAdType)) ||
+                AdType.REWARDED_PLAYABLE.equals(adType);
     }
 
     // Based on Volley's StringResponse class.

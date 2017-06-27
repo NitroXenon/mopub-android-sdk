@@ -64,12 +64,12 @@ public class DrawableConstants {
         public static final int TEXT_COLOR = Color.WHITE;
         public static final Paint.Align TEXT_ALIGN = Paint.Align.CENTER;
     }
-    
+
     public static class CloseButton {
-        public static final int WIDGET_HEIGHT_DIPS = 46;
-        public static final int EDGE_PADDING = 16;
-        public static final int IMAGE_PADDING_DIPS = 5;
-        public static final int TEXT_RIGHT_MARGIN_DIPS = 7;
+        public static final int WIDGET_HEIGHT_DIPS = 56;
+        public static final int EDGE_PADDING = 6;
+        public static final int IMAGE_PADDING_DIPS = 15;
+        public static final int TEXT_RIGHT_MARGIN_DIPS = 0;
         public static final float TEXT_SIZE_SP = 20f;
 
         public static final int STROKE_COLOR = Color.WHITE;
@@ -80,7 +80,7 @@ public class DrawableConstants {
         public static final Typeface TEXT_TYPEFACE = Typeface.create("Helvetica", Typeface.NORMAL);
         public static final int TEXT_COLOR = Color.WHITE;
     }
-    
+
     public static class GradientStrip {
         public static final int GRADIENT_STRIP_HEIGHT_DIPS = 72;
         public static final int START_COLOR = Color.argb(102, 0, 0, 0);
